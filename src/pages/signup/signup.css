@@ -1,0 +1,244 @@
+.signup-container {
+  display: flex;
+  width: 1440px;
+  height: 1024px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.signup-left {
+  flex: 1;
+  position: relative;
+  overflow: visible;
+}
+
+.signup-background-image {
+  width: 600px;
+  height: 800px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.signup-right {
+  flex: 1;
+  background-color: white;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem;
+  padding-top: 0px;
+}
+
+.signup-form-wrapper {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.signup-logo {
+  max-width: 150px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.signup-tabs {
+  display: flex;
+  width: 100%;
+  border: none;
+  gap: 0;
+  background-color: transparent;
+}
+
+.signup-tab {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #e0e0e0;
+  background-color: #ECF0FF;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  border-radius: 8px;
+}
+
+.signup-tab:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-right: none;
+}
+
+.signup-tab:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-left: none;
+}
+
+.signup-tab:hover {
+  background-color: #213448;
+  color: white;
+  border-color: #213448;
+}
+
+.signup-tab.active {
+  background-color: #213448;
+  color: white;
+  border-color: #213448;
+  z-index: 1;
+}
+
+.signup-tab.active:hover {
+  background-color: #213448;
+  border-color: #213448;
+}
+
+.signup-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.signup-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.signup-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.signup-input::placeholder {
+  color: #999;
+}
+
+.password-validation {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.validation-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.validation-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  color: transparent;
+  font-size: 0.75rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.validation-check.valid {
+  background-color: #28a745;
+  color: white;
+}
+
+.validation-text {
+  color: #666;
+  line-height: 1.4;
+}
+
+.validation-text strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.signup-submit-btn {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background-color: #213448;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.signup-submit-btn:hover {
+  background-color: #213448;
+  opacity: 0.9;
+}
+
+.signup-submit-btn:active {
+  background-color: #213448;
+  opacity: 0.8;
+}
+
+.social-login {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: space-between;
+}
+
+.social-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+}
+
+.social-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.social-btn:hover {
+  border-color: #213448;
+  background-color: #f8f9fa;
+}
+
+.gmail-btn:hover {
+  border-color: #db4437;
+}
+
+.apple-btn:hover {
+  border-color: #000000;
+}
+
+.microsoft-btn:hover {
+  border-color: #00a4ef;
+}
+
