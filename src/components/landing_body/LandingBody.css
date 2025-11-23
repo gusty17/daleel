@@ -1,0 +1,56 @@
+.landing-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+  width: 100%;
+  gap: 1rem;
+  color: #213448;
+}
+
+.landing-text {
+  width: 100%;
+  max-width: 1000px;
+  align-self: center;
+}
+
+.landing-text h1 {
+  font-family: 'Segoe UI', 'Segoe', sans-serif;
+  font-weight: 400;
+  font-size: 64px;
+  margin: 0;
+  text-align: left;
+}
+
+.landing-text .subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  margin: 0.5rem 0 0;
+  max-width: 600px;
+  color: #8E8E8E;
+  text-align: left;
+}
+
+.landing-visual {
+  max-width: 1000px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 40px;
+}
+
+.landing-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 1000px;
+  text-align: left;
+  margin-bottom: 30px ;
+}
+
+.landing-highlights p {
+  font-family: 'Inter', sans-serif;
+  font-size: 25px;
+  margin: 0;
+}
+

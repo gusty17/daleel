@@ -1,13 +1,6 @@
 .App {
   min-height: 100vh;
-  padding: 2rem;
-  text-align: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #f4f6ff;
-}
-
-.App h1 {
   margin: 0;
-  font-size: 2rem;
-  letter-spacing: 0.02em;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

@@ -20,8 +20,10 @@ function Signup() {
       alert('Passwords do not match!');
       return;
     }
-    // Handle form submission here
     console.log('Email:', email, 'Password:', password);
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
   };
 
   const handleGmailLogin = () => {

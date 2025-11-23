@@ -1,0 +1,52 @@
+.landing-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding-left: 120px;
+  padding-right: 120px;
+}
+
+.header-left .daleel-logo {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+
+.header-center {
+  display: inline-flex;
+  border-radius: 999px;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+.header-center .nav-pill {
+  border: none;
+  background-color: transparent;
+  color: #213448;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.header-center .nav-pill:hover {
+  background-color: rgba(33, 52, 72, 0.08);
+}
+
+.header-right .register-btn {
+  border: none;
+  background-color: #213448;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.65rem 1.5rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.header-right .register-btn:hover {
+  opacity: 0.9;
+}
+

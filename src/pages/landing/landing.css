@@ -1,0 +1,10 @@
+.landing-page {
+  min-height: 100vh;
+  background-color: #ECEFCA;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  gap: 2rem;
+}
