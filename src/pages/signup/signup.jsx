@@ -4,26 +4,81 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import AuthImageSide from '../../components/sign_left_side/AuthImageSide';
 import AuthHeader from '../../components/sign_right_side/AuthHeader';
+import axiosClient from '../../api/axiosClient';
 import { getPasswordStrength, 
          hasMinLength,
          hasNumberOrSymbol,
          passwordsMatch } from '../../utils/passwordUtils';
+         
 
+// email pass full name mobile number nid 
 function Signup() {
   const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [nationalId, setNationalId] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleNationalIdChange = (e) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    if (value.length <= 14) {
+      setNationalId(value);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validation
     if (password !== confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
-    console.log('Email:', email, 'Password:', password);
-    setEmail('');
-    setPassword('');
-    setConfirmPassword('');
+    if (nationalId.length !== 14) {
+      alert('National ID must be exactly 14 digits!');
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const response = await axiosClient.post('/signup', {
+        email,
+        fullName,
+        mobileNumber,
+        nationalId,
+        password
+      });
+      
+      // Success handling
+      console.log('Signup successful:', response.data);
+      alert('Account created successfully!');
+      
+      // Clear form
+      setEmail('');
+      setFullName('');
+      setMobileNumber('');
+      setNationalId('');
+      setPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      // Error handling
+      console.error('Signup error:', error);
+      if (error.response) {
+        // Server responded with error status
+        alert(error.response.data?.message || 'Signup failed. Please try again.');
+      } else if (error.request) {
+        // Request was made but no response received
+        alert('Network error. Please check your connection.');
+      } else {
+        // Something else happened
+        alert('An error occurred. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGmailLogin = () => {
@@ -54,10 +109,28 @@ function Signup() {
           {/* Form */}
           <form className="signup-form" onSubmit={handleSubmit}>
             <Input 
+              type="text" 
+              placeholder="Full Name" 
+              value={fullName} 
+              onChange={(e) => setFullName(e.target.value)} 
+            />
+            <Input 
               type="email" 
               placeholder="Email" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
+            />
+            <Input 
+              type="tel" 
+              placeholder="Mobile Number" 
+              value={mobileNumber} 
+              onChange={(e) => setMobileNumber(e.target.value)} 
+            />
+            <Input 
+              type="text" 
+              placeholder="National ID (14 digits)" 
+              value={nationalId} 
+              onChange={handleNationalIdChange} 
             />
             <Input 
               type="password" 
@@ -102,8 +175,8 @@ function Signup() {
               </div>
             </div>
 
-            <Button type="submit" className="signup-submit-btn">
-              Create Account
+            <Button type="submit" className="signup-submit-btn" disabled={isLoading}>
+              {isLoading ? 'Creating Account...' : 'Create Account'}
             </Button>
           </form>
 
