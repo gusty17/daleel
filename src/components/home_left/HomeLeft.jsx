@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomeLeft.css';
 
-function HomeLeft({ onProfileClick }) {
+function HomeLeft({ onProfileClick, onBusinessClick, onAddBusinessClick }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -31,13 +31,13 @@ function HomeLeft({ onProfileClick }) {
       </div>
 
       {/* User Business */}
-      <div className="home-left-item">
+      <div className="home-left-item" onClick={onBusinessClick}>
         <div className="home-left-icon">🏢</div>
         <span className="home-left-text">User Business</span>
       </div>
 
       {/* Add Business */}
-      <div className="home-left-item">
+      <div className="home-left-item" onClick={onAddBusinessClick}>
         <div className="home-left-icon">➕</div>
         <span className="home-left-text">Add Business</span>
       </div>

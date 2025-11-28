@@ -18,6 +18,7 @@
   width: 100%;
   max-width: 120px;
   height: auto;
+  margin-left: 40px;
   filter: brightness(0) invert(1);
 }
 
