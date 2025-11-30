@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './home.css';
 import HomeLeft from '../../components/home_left/HomeLeft';
 import axiosClient from '../../api/axiosClient';
 import BusinessBox from '../../components/box/BusinessBox';
 
 function Home() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showProfile, setShowProfile] = useState(false);
   const [showBusinessBoxes, setShowBusinessBoxes] = useState(false);
   const [showAddBusinessForm, setShowAddBusinessForm] = useState(false);
@@ -104,7 +107,7 @@ function Home() {
     try {
       const response = await axiosClient.get('/user/businesses');
       const data = normalizeBusinesses(response.data);
-      setBusinesses(data.length ? data : defaultBusinesses);
+      setBusinesses(data.length ? data : []);
     } catch (error) {
       console.error('Error fetching business data:', error);
       setBusinesses(defaultBusinesses);
@@ -183,7 +186,29 @@ function Home() {
 
   // Use default data if no user data is loaded yet
   const displayData = userData || defaultUserData;
-  const businessDisplay = businesses.length ? businesses : defaultBusinesses;
+  // Show actual businesses, or empty array to show empty state
+  const businessDisplay = businesses;
+
+  // Handle navigation state from business_details page
+  useEffect(() => {
+    const state = location.state;
+    if (state) {
+      if (state.showProfile) {
+        // Trigger profile click
+        handleProfileClick();
+      } else if (state.showBusinesses) {
+        // Trigger business click
+        handleBusinessClick();
+      } else if (state.showAddBusiness) {
+        // Trigger add business click
+        handleAddBusinessClick();
+      }
+      
+      // Clear the state to prevent re-triggering on re-renders
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, location.state]);
 
   return (
     <div className="home-container">
@@ -237,14 +262,42 @@ function Home() {
               <div className="business-loading">Loading businesses...</div>
             ) : (
               <div className="business-box-grid">
-                {businessDisplay.map((business, index) => (
-                  <BusinessBox
-                    key={business.id || business.taxNumber || index}
-                    name={business.name}
-                    taxNumber={business.taxNumber}
-                    taxAmount={business.taxAmount}
-                  />
-                ))}
+                {businessDisplay.length === 0 ? (
+                  <div className="business-box empty-business-box">
+                    <div className="business-box-field">
+                      <span className="business-box-label">Business Name</span>
+                      <span className="business-box-value">No businesses yet</span>
+                    </div>
+                    <div className="business-box-field">
+                      <span className="business-box-label">Tax Number</span>
+                      <span className="business-box-value">-</span>
+                    </div>
+                    <div className="business-box-field">
+                      <span className="business-box-label">Tax Amount</span>
+                      <span className="business-box-value">-</span>
+                    </div>
+                  </div>
+                ) : (
+                  businessDisplay.map((business, index) => (
+                    <BusinessBox
+                      key={business.id || business.taxNumber || index}
+                      name={business.name}
+                      taxNumber={business.taxNumber}
+                      taxAmount={business.taxAmount}
+                      onClick={() => navigate('/business_details', { state: { business } })}
+                    />
+                  ))
+                )}
+                <div 
+                  className="business-box add-business-box" 
+                  onClick={handleAddBusinessClick}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="add-business-content">
+                    <div className="add-business-icon">➕</div>
+                    <span className="add-business-text">Add Business</span>
+                  </div>
+                </div>
               </div>
             )}
           </div>

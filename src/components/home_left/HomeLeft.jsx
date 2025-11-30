@@ -13,10 +13,14 @@ function HomeLeft({ onProfileClick, onBusinessClick, onAddBusinessClick }) {
     navigate('/login');
   };
 
+  const handleLogoClick = () => {
+    navigate('/home');
+  };
+
   return (
     <div className="home-left">
       {/* Logo at the top */}
-      <div className="home-left-logo">
+      <div className="home-left-logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
         <img 
           src="/images/daleel_logo.png" 
           alt="Daleel Logo" 
