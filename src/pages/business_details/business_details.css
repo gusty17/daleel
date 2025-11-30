@@ -134,6 +134,13 @@
   border: 1px solid #e5e7eb;
 }
 
+.file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
 .file-name {
   font-size: 14px;
   color: #16202b;
@@ -147,7 +154,33 @@
 .file-size {
   font-size: 12px;
   color: #6b7280;
+}
+
+.file-remove-btn {
   margin-left: 12px;
+  padding: 4px 8px;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  color: #dc2626;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  min-width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+}
+
+.file-remove-btn:hover {
+  background-color: #fca5a5;
+  border-color: #dc2626;
+}
+
+.file-remove-btn:active {
+  transform: scale(0.95);
 }
 
 .invoice-submit-btn {

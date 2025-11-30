@@ -3,7 +3,7 @@ import './BusinessBox.css';
 
 function BusinessBox({ name, taxNumber, taxAmount, onClick }) {
   const formattedTaxAmount =
-    typeof taxAmount === 'number' ? `${taxAmount.toLocaleString()} EGP` : taxAmount || 'N/A';
+    typeof taxAmount === 'number' ? `${taxAmount.toLocaleString()} EGP` : 'Unknown';
 
   return (
     <div className="business-box" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>

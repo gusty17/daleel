@@ -11,29 +11,33 @@ function BusinessDetails() {
     id: 'default',
     name: 'Unknown Business',
     taxNumber: 'N/A',
-    taxAmount: 0
+    taxAmount: null
   };
 
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [totalTaxAmount, setTotalTaxAmount] = useState(null);
+  const [totalTaxAmount, setTotalTaxAmount] = useState(business.taxAmount || null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
+    const newFiles = Array.from(e.target.files);
     
     // Validate that all files are PDFs
-    const invalidFiles = files.filter(file => file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf'));
+    const invalidFiles = newFiles.filter(file => file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf'));
     if (invalidFiles.length > 0) {
       setError('Please select only PDF files.');
-      setSelectedFiles([]);
       return;
     }
     
-    setSelectedFiles(files);
+    // Append new files to existing files
+    setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
     setError('');
     setSuccess('');
+  };
+
+  const handleRemoveFile = (indexToRemove) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
   const handleSubmit = async (e) => {
@@ -61,7 +65,7 @@ function BusinessDetails() {
         },
       });
 
-      const calculatedTax = response?.data?.totalTaxAmount || response?.data?.taxAmount || 0;
+      const calculatedTax = response?.data?.totalTaxAmount || response?.data?.taxAmount || null;
       setTotalTaxAmount(calculatedTax);
       setSuccess('Invoices uploaded and tax calculated successfully.');
       setSelectedFiles([]);
@@ -111,6 +115,14 @@ function BusinessDetails() {
               <span className="business-info-label">Tax Number</span>
               <span className="business-info-value">{business.taxNumber}</span>
             </div>
+            <div className="business-info-item">
+              <span className="business-info-label">Tax Amount</span>
+              <span className="business-info-value">
+                {totalTaxAmount !== null && typeof totalTaxAmount === 'number'
+                  ? `${totalTaxAmount.toLocaleString()} EGP`
+                  : 'Unknown'}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -143,10 +155,20 @@ function BusinessDetails() {
                 <div className="selected-files-list">
                   {selectedFiles.map((file, index) => (
                     <div key={index} className="selected-file-item">
-                      <span className="file-name">{file.name}</span>
-                      <span className="file-size">
-                        {(file.size / 1024).toFixed(2)} KB
-                      </span>
+                      <div className="file-info">
+                        <span className="file-name">{file.name}</span>
+                        <span className="file-size">
+                          {(file.size / 1024).toFixed(2)} KB
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        className="file-remove-btn"
+                        onClick={() => handleRemoveFile(index)}
+                        title="Remove file"
+                      >
+                        ✕
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -161,13 +183,13 @@ function BusinessDetails() {
               className="invoice-submit-btn"
               disabled={isSubmitting || selectedFiles.length === 0}
             >
-              {isSubmitting ? 'Processing...' : 'Submit Invoices'}
+              {isSubmitting ? 'Processing...' : `Submit ${selectedFiles.length > 0 ? `(${selectedFiles.length})` : ''} Invoices`}
             </button>
           </form>
         </div>
 
-        {/* Total Tax Amount Display */}
-        {totalTaxAmount !== null && (
+        {/* Total Tax Amount Display - Only show if it was calculated after first submission */}
+        {totalTaxAmount !== null && success && (
           <div className="tax-amount-box">
             <div className="profile-info-header">
               <h3>Tax Calculation Result</h3>

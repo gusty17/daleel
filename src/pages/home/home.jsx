@@ -23,6 +23,7 @@ function Home() {
     revenueMin: '',
     revenueMax: ''
   });
+  const [selectedInvoiceFiles, setSelectedInvoiceFiles] = useState([]);
   const [businessFormError, setBusinessFormError] = useState('');
   const [businessFormSuccess, setBusinessFormSuccess] = useState('');
 
@@ -34,26 +35,7 @@ function Home() {
     nationalId: '30303030303030'
   };
 
-  const defaultBusinesses = [
-    {
-      id: 'demo-1',
-      name: 'business1',
-      taxNumber: 'TN-203003',
-      taxAmount: 1500
-    },
-    {
-      id: 'demo-2',
-      name: 'business2',
-      taxNumber: 'TN-203663',
-      taxAmount: 1500
-    },
-    {
-      id: 'demo-3',
-      name: 'business3',
-      taxNumber: 'TN-403090',
-      taxAmount: 2240
-    }
-  ];
+  const defaultBusinesses = [];
 
   const normalizeBusinesses = (payload) => {
     if (!payload) return [];
@@ -123,6 +105,7 @@ function Home() {
     setShowBusinessBoxes(false);
     setBusinessFormError('');
     setBusinessFormSuccess('');
+    setSelectedInvoiceFiles([]);
   };
 
   const handleBusinessFormChange = (e) => {
@@ -131,6 +114,25 @@ function Home() {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleInvoiceFileChange = (e) => {
+    const newFiles = Array.from(e.target.files);
+    
+    // Validate that all files are PDFs
+    const invalidFiles = newFiles.filter(file => file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf'));
+    if (invalidFiles.length > 0) {
+      setBusinessFormError('Please select only PDF files for invoices.');
+      return;
+    }
+    
+    // Append new files to existing files
+    setSelectedInvoiceFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    setBusinessFormError('');
+  };
+
+  const handleRemoveInvoiceFile = (indexToRemove) => {
+    setSelectedInvoiceFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
   const handleBusinessFormSubmit = async (e) => {
@@ -167,8 +169,35 @@ function Home() {
         response?.data ||
         payload;
 
-      setBusinesses((prev) => [...prev, created]);
-      setBusinessFormSuccess('Business added successfully.');
+      // Set taxAmount to null for new business (unknown until invoices are added)
+      const newBusiness = { ...created, taxAmount: null };
+
+      // If invoices were selected, upload them
+      if (selectedInvoiceFiles.length > 0) {
+        try {
+          const formData = new FormData();
+          selectedInvoiceFiles.forEach((file) => {
+            formData.append('invoices', file);
+          });
+          formData.append('businessId', newBusiness.id || newBusiness.taxRegistrationNumber);
+
+          const invoiceResponse = await axiosClient.post('/business/invoices', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+
+          const calculatedTax = invoiceResponse?.data?.totalTaxAmount || invoiceResponse?.data?.taxAmount || null;
+          newBusiness.taxAmount = calculatedTax;
+        } catch (invoiceError) {
+          console.error('Error uploading invoices:', invoiceError);
+          // Business was created but invoice upload failed
+          setBusinessFormSuccess('Business added successfully. However, invoice upload failed.');
+        }
+      }
+
+      setBusinesses((prev) => [...prev, newBusiness]);
+      setBusinessFormSuccess('Business added successfully' + (selectedInvoiceFiles.length > 0 ? ' and invoices uploaded.' : '.'));
       setBusinessForm({
         name: '',
         type: '',
@@ -176,6 +205,7 @@ function Home() {
         revenueMin: '',
         revenueMax: ''
       });
+      setSelectedInvoiceFiles([]);
     } catch (error) {
       console.error('Error adding business:', error);
       setBusinessFormError('Failed to add business. Please try again.');
@@ -377,6 +407,53 @@ function Home() {
                     placeholder="Max"
                   />
                 </div>
+              </div>
+
+              {/* Invoice Upload Section */}
+              <div className="form-row">
+                <label className="form-label" htmlFor="business-invoices">
+                  Upload Invoice PDFs (Optional)
+                </label>
+                <label htmlFor="business-invoices" className="file-upload-label">
+                  <div className="file-upload-area-small">
+                    <span className="file-upload-icon-small">📄</span>
+                    <span className="file-upload-text-small">
+                      {selectedInvoiceFiles.length > 0
+                        ? `${selectedInvoiceFiles.length} PDF file(s) selected`
+                        : 'Click to select PDF files'}
+                    </span>
+                    <input
+                      id="business-invoices"
+                      type="file"
+                      multiple
+                      accept=".pdf,application/pdf"
+                      onChange={handleInvoiceFileChange}
+                      className="file-input"
+                    />
+                  </div>
+                </label>
+                {selectedInvoiceFiles.length > 0 && (
+                  <div className="selected-files-list-small">
+                    {selectedInvoiceFiles.map((file, index) => (
+                      <div key={index} className="selected-file-item-small">
+                        <div className="file-info-small">
+                          <span className="file-name-small">{file.name}</span>
+                          <span className="file-size-small">
+                            {(file.size / 1024).toFixed(2)} KB
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          className="file-remove-btn-small"
+                          onClick={() => handleRemoveInvoiceFile(index)}
+                          title="Remove file"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {businessFormError && (
