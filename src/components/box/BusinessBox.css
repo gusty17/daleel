@@ -8,6 +8,15 @@
   gap: 12px;
   border: 1px solid rgba(0, 0, 0, 0.05);
   width: 90%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.business-box.hovered {
+  background: linear-gradient(135deg, #d9dce0 0%, #e8ecf1 100%);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  border-color: #2563eb;
+  border-width: 2px;
 }
 
 .business-box-field {
@@ -22,6 +31,11 @@
   color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+
+.business-box.hovered .business-box-label {
+  color: #2563eb;
 }
 
 .business-box-value {
@@ -29,5 +43,45 @@
   font-weight: 500;
   color: #16202b;
   word-break: break-word;
+  transition: color 0.3s ease;
+}
+
+.business-box.hovered .business-box-value {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.business-pay-button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+}
+
+.business-pay-button.enabled {
+  background-color: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.business-pay-button.enabled:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.business-pay-button.enabled:active {
+  transform: translateY(0);
+}
+
+.business-pay-button.disabled {
+  background-color: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
 }
 

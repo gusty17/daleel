@@ -1,0 +1,164 @@
+.business-detail-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #213448;
+}
+
+.business-detail-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.business-info-box {
+  width: 100%;
+  max-width: 600px;
+  background-color: #f5f7fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 24px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.business-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.business-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.business-info-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.business-info-value {
+  font-size: 16px;
+  font-weight: 500;
+  color: #16202b;
+  word-break: break-word;
+}
+
+.invoice-form-box {
+  width: 100%;
+  max-width: 600px;
+  background-color: #f5f7fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 24px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.invoice-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+}
+
+.form-message {
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.form-error {
+  color: #b91c1c;
+  background-color: #fee2e2;
+}
+
+.form-success {
+  color: #15803d;
+  background-color: #d1fae5;
+}
+
+.invoice-submit-btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  background-color: #2563eb;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.05s ease;
+  margin-top: 8px;
+}
+
+.invoice-submit-btn:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.invoice-submit-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.invoice-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.business-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.business-info-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #16202b;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

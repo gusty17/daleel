@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomeLeft.css';
 
-function HomeLeft({ onProfileClick, onBusinessClick, onAddBusinessClick }) {
+function HomeLeft({ onProfileClick, onBusinessClick, onAddBusinessClick, onLogoClick }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -13,10 +13,19 @@ function HomeLeft({ onProfileClick, onBusinessClick, onAddBusinessClick }) {
     navigate('/login');
   };
 
+  const handleLogoClick = () => {
+    // Call parent's onLogoClick to hide all boxes
+    if (onLogoClick) {
+      onLogoClick();
+    }
+    // Navigate to home page
+    navigate('/home');
+  };
+
   return (
     <div className="home-left">
       {/* Logo at the top */}
-      <div className="home-left-logo">
+      <div className="home-left-logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
         <img 
           src="/images/daleel_logo.png" 
           alt="Daleel Logo" 

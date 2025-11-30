@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './home.css';
 import HomeLeft from '../../components/home_left/HomeLeft';
 import axiosClient from '../../api/axiosClient';
 import BusinessBox from '../../components/box/BusinessBox';
 
 function Home() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showProfile, setShowProfile] = useState(false);
   const [showBusinessBoxes, setShowBusinessBoxes] = useState(false);
   const [showAddBusinessForm, setShowAddBusinessForm] = useState(false);
@@ -32,24 +35,16 @@ function Home() {
   };
 
   const defaultBusinesses = [
-    {
-      id: 'demo-1',
-      name: 'business1',
-      taxNumber: 'TN-203003',
-      taxAmount: 1500
-    },
-    {
-      id: 'demo-2',
-      name: 'business2',
-      taxNumber: 'TN-203663',
-      taxAmount: 1500
-    },
-    {
-      id: 'demo-3',
-      name: 'business3',
-      taxNumber: 'TN-403090',
-      taxAmount: 2240
-    }
+   { id: 'default-business-1',
+    name: 'Business1',
+    taxNumber: '123',
+    taxAmount: null
+   },
+   { id: 'default-business-2',
+    name: 'Unknown Business',
+    taxNumber: '456',
+    taxAmount: 200
+   }
   ];
 
   const normalizeBusinesses = (payload) => {
@@ -60,6 +55,28 @@ function Home() {
       return payload.data.businesses;
     }
     return [];
+  };
+
+  const calculateBirthDateFromNationalId = (nationalId) => {
+    if (!nationalId || nationalId.length < 7) return 'N/A';
+    
+    const yearStr = nationalId.substring(1, 3);
+    const monthStr = nationalId.substring(3, 5);
+    const dayStr = nationalId.substring(5, 7);
+    
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10);
+    const day = parseInt(dayStr, 10);
+    
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+      return 'N/A';
+    }
+    
+    // Determine century: 0-29 is 2000s, 30-99 is 1900s
+    const fullYear = year <= 29 ? 2000 + year : 1900 + year;
+    
+    const date = new Date(fullYear, month - 1, day);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
   const handleProfileClick = async () => {
@@ -120,6 +137,18 @@ function Home() {
     setShowBusinessBoxes(false);
     setBusinessFormError('');
     setBusinessFormSuccess('');
+  };
+
+  const handleLogoClick = () => {
+    // Hide all boxes when logo is clicked
+    setShowProfile(false);
+    setShowBusinessBoxes(false);
+    setShowAddBusinessForm(false);
+  };
+
+  const handlePayClick = (business) => {
+    // Navigate to checkout page with business data
+    navigate('/checkout', { state: { business } });
   };
 
   const handleBusinessFormChange = (e) => {
@@ -185,12 +214,41 @@ function Home() {
   const displayData = userData || defaultUserData;
   const businessDisplay = businesses.length ? businesses : defaultBusinesses;
 
+  // Handle navigation state from businessDetail page
+  useEffect(() => {
+    const state = location.state;
+    if (state && Object.keys(state).length > 0) {
+      if (state.showProfile) {
+        setShowProfile(true);
+        setShowBusinessBoxes(false);
+        setShowAddBusinessForm(false);
+      } else if (state.showBusinesses) {
+        setShowProfile(false);
+        setShowBusinessBoxes(true);
+        setShowAddBusinessForm(false);
+      } else if (state.showAddBusiness) {
+        setShowProfile(false);
+        setShowBusinessBoxes(false);
+        setShowAddBusinessForm(true);
+      }
+      
+      // Clear the state to prevent re-triggering on re-renders
+      // Use setTimeout to defer the state reset to the next tick
+      const timer = setTimeout(() => {
+        navigate(location.pathname, { replace: true, state: {} });
+      }, 0);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [location.state, location.pathname, navigate]);
+
   return (
     <div className="home-container">
       <HomeLeft
         onProfileClick={handleProfileClick}
         onBusinessClick={handleBusinessClick}
         onAddBusinessClick={handleAddBusinessClick}
+        onLogoClick={handleLogoClick}
       />
       
       {/* Main content area */}
@@ -222,9 +280,14 @@ function Home() {
                   <span className="profile-info-label">National ID:</span>
                   <span className="profile-info-value">{displayData.nationalId}</span>
                 </div>
+                <div className="profile-info-item">
+                  <span className="profile-info-label">Birth Date:</span>
+                  <span className="profile-info-value">{calculateBirthDateFromNationalId(displayData.nationalId)}</span>
+                </div>
               </div>
             )}
           </div>
+          
         )}
 
         {showBusinessBoxes && (
@@ -235,16 +298,41 @@ function Home() {
             </div>
             {isBusinessLoading ? (
               <div className="business-loading">Loading businesses...</div>
+            ) : businessDisplay.length === 0 ? (
+              <div className="empty-businesses-container">
+                <div 
+                  className="business-box add-business-box-center" 
+                  onClick={handleAddBusinessClick}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="add-business-content">
+                    <div className="add-business-icon">➕</div>
+                    <span className="add-business-text">Add Business</span>
+                  </div>
+                </div>
+              </div>
             ) : (
               <div className="business-box-grid">
                 {businessDisplay.map((business, index) => (
                   <BusinessBox
-                    key={business.id || business.taxNumber || index}
+                    key={business.id}
                     name={business.name}
                     taxNumber={business.taxNumber}
                     taxAmount={business.taxAmount}
+                    onClick={() => navigate('/businessDetail', { state: { business } })}
+                    onPay={() => handlePayClick(business)}
                   />
                 ))}
+                <div 
+                  className="business-box add-business-box" 
+                  onClick={handleAddBusinessClick}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="add-business-content">
+                    <div className="add-business-icon">➕</div>
+                    <span className="add-business-text">Add Business</span>
+                  </div>
+                </div>
               </div>
             )}
           </div>

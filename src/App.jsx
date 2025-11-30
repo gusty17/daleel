@@ -4,6 +4,8 @@ import Signup from './pages/signup/signup';
 import Landing from './pages/landing/landing';
 import Login from './pages/login/login';
 import Home from './pages/home/home';
+import BusinessDetail from './pages/businessDetail/businessDetail';
+import Checkout from './pages/checkout/checkout';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/businessDetail" element={<BusinessDetail />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
     </div>
   );
