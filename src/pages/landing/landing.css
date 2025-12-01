@@ -6,5 +6,389 @@
   justify-content: flex-start;
   align-items: center;
   box-sizing: border-box;
+  gap: 4rem;
+  padding: 0;
+}
+
+.landing-page > section:first-of-type,
+.landing-page > header {
+  margin-top: 2rem;
+}
+
+/* Plans Section */
+.plans-section {
+  width: 100%;
+  max-width: 1200px;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+
+.plans-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: #213448;
+  margin: 0;
+  text-align: center;
+}
+
+.plans-subtitle {
+  font-size: 18px;
+  color: #8E8E8E;
+  margin: -1.5rem 0 0 0;
+  text-align: center;
+}
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
+  width: 100%;
+}
+
+.plan-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.plan-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.plan-card.popular {
+  border: 3px solid #213448;
+  transform: scale(1.05);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: #213448;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.discount-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #f59e0b;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.plan-header h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #213448;
+  margin: 0 0 0.5rem 0;
+}
+
+.plan-duration {
+  font-size: 14px;
+  color: #8E8E8E;
+  margin: 0;
+}
+
+.plan-pricing {
+  margin: 2rem 0;
+  text-align: left;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #8E8E8E;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.amount {
+  font-size: 48px;
+  font-weight: 700;
+  color: #213448;
+}
+
+.currency {
+  font-size: 20px;
+  color: #8E8E8E;
+  font-weight: 600;
+}
+
+.price-note {
+  font-size: 14px;
+  color: #8E8E8E;
+  margin: 0.5rem 0 0 0;
+}
+
+.plan-features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.plan-features li {
+  padding: 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #213448;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.plan-features li:last-child {
+  border-bottom: none;
+}
+
+.checkmark {
+  color: #213448;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Contact Section */
+.contact-section {
+  width: 100%;
+  max-width: 1200px;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+
+.contact-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: #213448;
+  margin: 0;
+  text-align: center;
+}
+
+.contact-subtitle {
+  font-size: 18px;
+  color: #8E8E8E;
+  margin: -1.5rem 0 0 0;
+  text-align: center;
+}
+
+.contact-content {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  width: 100%;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.contact-item {
+  text-align: center;
+  min-width: 200px;
+}
+
+.contact-item h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #213448;
+  margin: 0 0 0.5rem 0;
+}
+
+.contact-item p {
+  font-size: 16px;
+  color: #8E8E8E;
+  margin: 0;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contact-input,
+.contact-textarea {
+  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.contact-input:focus,
+.contact-textarea:focus {
+  border-color: #213448;
+}
+
+.contact-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.contact-submit-btn {
+  padding: 1rem 2rem;
+  background-color: #213448;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(33, 52, 72, 0.3);
+}
+
+.contact-submit-btn:hover {
+  background-color: #1a2936;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(33, 52, 72, 0.4);
+}
+
+.contact-submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Footer */
+.landing-footer {
+  width: 100%;
+  background-color: #213448;
+  color: white;
+  padding: 3rem 0 1rem 0;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 3rem;
+}
+
+.footer-section h4 {
+  font-size: 18px;
+  margin: 0 0 1.5rem 0;
+  font-weight: 700;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-section li {
+  margin-bottom: 0.75rem;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.footer-section li:hover {
+  color: white;
+}
+
+.contact-info-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contact-info-footer p {
+  color: #e5e7eb;
+  font-size: 14px;
+  margin: 0;
+}
+
+.contact-info-footer strong {
+  color: white;
+  margin-right: 0.5rem;
+}
+
+.footer-logo {
+  height: 60px;
+  width: auto;
+  margin-bottom: 1rem;
+}
+
+.footer-description {
+  color: #e5e7eb;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 350px;
+}
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 2rem 0 2rem;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 3rem;
+}
+
+.footer-bottom p {
+  color: #e5e7eb;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Scroll to Top Button */
+.scroll-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 50px;
+  height: 50px;
+  background-color: #213448;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(33, 52, 72, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scroll-to-top:hover {
+  background-color: #1a2936;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(33, 52, 72, 0.5);
+}
+
+.scroll-to-top:active {
+  transform: translateY(0);
 }

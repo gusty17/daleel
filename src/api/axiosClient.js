@@ -1,13 +1,26 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL:'http://localhost:3000/api',
   headers: {
     'Content-Type': 'application/json',
   },
   withCredentials: true,
-  timeout: 3000,
+  timeout: 30000000,
 });
+
+// Add request interceptor to include token
+axiosClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export default axiosClient;
 

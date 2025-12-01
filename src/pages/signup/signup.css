@@ -58,12 +58,12 @@
 
 .signup-tab {
   flex: 1;
-  padding: 0.75rem 1.5rem;
-  border: 2px solid #e0e0e0;
-  background-color: #ECF0FF;
-  color: #333;
+  padding: 0.875rem 1.5rem;
+  border: 2px solid #e5e7eb;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  color: #374151;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -71,32 +71,34 @@
 }
 
 .signup-tab:first-child {
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
   border-right: none;
 }
 
 .signup-tab:last-child {
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
   border-left: none;
 }
 
 .signup-tab:hover {
-  background-color: #213448;
+  background: linear-gradient(135deg, #1a2a3a 0%, #0f1920 100%);
   color: white;
   border-color: #213448;
+  transform: translateY(-2px);
 }
 
 .signup-tab.active {
-  background-color: #213448;
+  background: linear-gradient(135deg, #213448 0%, #1a2a3a 100%);
   color: white;
   border-color: #213448;
   z-index: 1;
+  box-shadow: 0 4px 12px rgba(33, 52, 72, 0.3);
 }
 
 .signup-tab.active:hover {
-  background-color: #213448;
+  background: linear-gradient(135deg, #213448 0%, #1a2a3a 100%);
   border-color: #213448;
 }
 
@@ -109,21 +111,24 @@
 
 .signup-input {
   width: 100%;
-  padding: 0.875rem 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
   box-sizing: border-box;
+  background: #ffffff;
 }
 
 .signup-input:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1), 0 4px 12px rgba(37, 99, 235, 0.15);
+  transform: translateY(-1px);
 }
 
 .signup-input::placeholder {
-  color: #999;
+  color: #9ca3af;
 }
 
 .password-validation {
@@ -174,26 +179,28 @@
 
 .signup-submit-btn {
   width: 100%;
-  padding: 0.875rem 1rem;
-  background-color: #213448;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #213448 0%, #1a2a3a 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+  margin-top: 0.75rem;
+  box-shadow: 0 4px 12px rgba(33, 52, 72, 0.3);
 }
 
 .signup-submit-btn:hover {
-  background-color: #213448;
-  opacity: 0.9;
+  background: linear-gradient(135deg, #1a2a3a 0%, #0f1920 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(33, 52, 72, 0.4);
 }
 
 .signup-submit-btn:active {
-  background-color: #213448;
-  opacity: 0.8;
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(33, 52, 72, 0.3);
 }
 
 .social-login {
@@ -207,38 +214,43 @@
 
 .social-btn {
   flex: 1;
-  padding: 0.75rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  padding: 0.875rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
   background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
+  min-height: 52px;
 }
 
 .social-logo {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
 }
 
 .social-btn:hover {
   border-color: #213448;
-  background-color: #f8f9fa;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .gmail-btn:hover {
   border-color: #db4437;
+  box-shadow: 0 4px 12px rgba(219, 68, 55, 0.2);
 }
 
 .apple-btn:hover {
   border-color: #000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .microsoft-btn:hover {
   border-color: #00a4ef;
+  box-shadow: 0 4px 12px rgba(0, 164, 239, 0.2);
 }
 

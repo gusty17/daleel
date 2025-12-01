@@ -5,20 +5,15 @@ function LandingBody() {
   return (
     <section className="landing-body">
       <div className="landing-text">
-        <h1>No more confusion</h1>
+        <h1>Smart Tax Compliance Made Simple</h1>
         <p className="subtitle">
-          Daleel — where real experiences guide you through every form, stamp, and signature.
+          Daleel — Your trusted partner in navigating Egypt's tax landscape for SMEs and Freelancers.
         </p>
       </div>
-      <img
-        src="/images/landing_image.png"
-        alt="Landing visual"
-        className="landing-visual"
-      />
       <div className="landing-highlights">
-        <p>Daleel is a community-powered platform that helps Egyptians navigate government paperwork with ease.</p>
-        <p>We collect and organize real experiences from people who have already completed their paperwork — showing you the exact steps, required documents, fees, and waiting times.</p>
-        <p>Instead of wasting hours searching or asking around, you can now find reliable, step-by-step guides written by real citizens — and share your own experience to help others.</p>
+        <p>Daleel helps small and medium enterprises and freelancers stay compliant with the Egyptian Tax Authority effortlessly.</p>
+        <p>Register your business, track all your invoices, and get accurate tax calculations automatically — all in one secure place.</p>
+        <p>We keep you organized with clear monthly and annual summaries of your income, so you always know where your business stands. No more spreadsheets, no more guesswork — just straightforward tax management that works for you.</p>
       </div>
     </section>
   );

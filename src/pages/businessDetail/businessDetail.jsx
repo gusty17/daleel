@@ -16,10 +16,13 @@ function BusinessDetail() {
   };
 
   const [invoiceForm, setInvoiceForm] = useState({
+    invoiceNumber: '',
     issuerName: '',
     receiverName: '',
-    amount: ''
+    totalAmount: ''
   });
+  const [invoices, setInvoices] = useState([]);
+  const [isLoadingInvoices, setIsLoadingInvoices] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [taxAmount, setTaxAmount] = useState(business.taxAmount || null);
   const [error, setError] = useState('');
@@ -32,6 +35,41 @@ function BusinessDetail() {
       setIsMounted(false);
     };
   }, []);
+  // Fetch invoices function (extracted so it can be reused after adding an invoice)
+  const fetchInvoices = async () => {
+    if (!business.id) {
+      setIsLoadingInvoices(false);
+      return;
+    }
+
+    setIsLoadingInvoices(true);
+    try {
+      const response = await axiosClient.post('/invoices/business-invoices', {
+        businessId: business.id
+      });
+
+      console.log('Invoices API response:', response.data);
+
+      // Handle different possible response structures
+      const invoiceData = Array.isArray(response.data)
+        ? response.data
+        : response.data.invoices || [];
+
+      setInvoices(invoiceData);
+    } catch (error) {
+      console.error('Error fetching invoices:', error);
+      setInvoices([]);
+    } finally {
+      // Always clear loading flag, regardless of mount status
+      setIsLoadingInvoices(false);
+    }
+  };
+
+  // Fetch invoices when component mounts or when business.id changes
+  useEffect(() => {
+    fetchInvoices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [business.id]);
 
   const handleInvoiceFormChange = (e) => {
     const { name, value } = e.target;
@@ -46,41 +84,55 @@ function BusinessDetail() {
     setError('');
     setSuccess('');
 
-    const { issuerName, receiverName, amount } = invoiceForm;
+    const { invoiceNumber, issuerName, receiverName, totalAmount } = invoiceForm;
 
     // Validation
-    if (!issuerName || !receiverName || !amount) {
+    if (!invoiceNumber || !issuerName || !receiverName || !totalAmount) {
       setError('Please fill in all invoice fields.');
       return;
     }
 
-    if (isNaN(Number(amount)) || Number(amount) <= 0) {
-      setError('Amount must be a valid number greater than 0.');
+    if (isNaN(Number(totalAmount)) || Number(totalAmount) <= 0) {
+      setError('Total amount must be a valid number greater than 0.');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
+      // Generate a UUID for the invoice (safe fallback if crypto.randomUUID is unavailable)
+      let invoiceUuid;
+      try {
+        invoiceUuid = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `inv-${Date.now()}`;
+      } catch (uuidErr) {
+        invoiceUuid = `inv-${Date.now()}`;
+      }
+
       const payload = {
-        businessId: business.id || business.taxNumber,
+        businessId: business.id,
+        invoiceUuid,
+        invoiceNumber,
         issuerName,
         receiverName,
-        amount: Number(amount)
+        totalAmount: Number(totalAmount)
       };
 
-      const response = await axiosClient.post('/business/invoice', payload);
+      const response = await axiosClient.post('/invoices/add', payload);
 
-      const calculatedTax = response?.data?.taxAmount || response?.data?.calculatedTax || null;
-      
-      // Only update state if component is still mounted
+      // Prefer backend response, otherwise use payload
+      const created = response?.data && Object.keys(response.data).length ? response.data : payload;
+
+      // Update UI: either re-fetch from server or optimistically append
+      // Re-fetch to guarantee consistency with server-side generated fields
+      await fetchInvoices();
+
       if (isMounted) {
-        setTaxAmount(calculatedTax);
-        setSuccess('Invoice added successfully and tax calculated.');
+        setSuccess('Invoice added successfully.');
         setInvoiceForm({
+          invoiceNumber: '',
           issuerName: '',
           receiverName: '',
-          amount: ''
+          totalAmount: ''
         });
       }
     } catch (error) {
@@ -89,9 +141,8 @@ function BusinessDetail() {
         setError(error.response?.data?.message || 'Failed to add invoice. Please try again.');
       }
     } finally {
-      if (isMounted) {
-        setIsSubmitting(false);
-      }
+      // always clear submitting flag so the button stops showing "Processing..."
+      setIsSubmitting(false);
     }
   };
 
@@ -112,6 +163,11 @@ function BusinessDetail() {
     navigate('/home');
   };
 
+  const handleBackClick = () => {
+    // Navigate back to home page with businesses showing
+    navigate('/home', { state: { showBusinesses: true } });
+  };
+
   // Handle navigation state from home page
   useEffect(() => {
     // This effect runs when the component mounts
@@ -128,8 +184,17 @@ function BusinessDetail() {
       />
 
       <div className="business-detail-main-content">
-        {/* Business Info Box */}
-        <div className="business-info-box">
+        {/* Back Button */}
+        <button className="back-button" onClick={handleBackClick}>
+          ← Back to Businesses
+        </button>
+
+        {/* Two Column Layout */}
+        <div className="content-wrapper">
+          {/* Left Column - Business Info and Add Invoice */}
+          <div className="left-column">
+            {/* Business Info Box */}
+            <div className="business-info-box">
           <div className="business-info-header">
             <h3>Business Information</h3>
           </div>
@@ -160,6 +225,22 @@ function BusinessDetail() {
           </div>
           <form className="invoice-form" onSubmit={handleAddInvoice}>
             <div className="form-row">
+              <label className="form-label" htmlFor="invoice-number">
+                Invoice Number
+              </label>
+              <input
+                id="invoice-number"
+                name="invoiceNumber"
+                className="form-input"
+                type="text"
+                value={invoiceForm.invoiceNumber}
+                onChange={handleInvoiceFormChange}
+                placeholder="e.g. INV-001"
+                required
+              />
+            </div>
+
+            <div className="form-row">
               <label className="form-label" htmlFor="issuer-name">
                 Issuer Name
               </label>
@@ -171,6 +252,7 @@ function BusinessDetail() {
                 value={invoiceForm.issuerName}
                 onChange={handleInvoiceFormChange}
                 placeholder="Enter issuer name"
+                required
               />
             </div>
 
@@ -186,23 +268,25 @@ function BusinessDetail() {
                 value={invoiceForm.receiverName}
                 onChange={handleInvoiceFormChange}
                 placeholder="Enter receiver name"
+                required
               />
             </div>
 
             <div className="form-row">
-              <label className="form-label" htmlFor="amount">
-                Amount
+              <label className="form-label" htmlFor="total-amount">
+                Total Amount
               </label>
               <input
-                id="amount"
-                name="amount"
+                id="total-amount"
+                name="totalAmount"
                 className="form-input"
                 type="number"
                 min="0"
                 step="0.01"
-                value={invoiceForm.amount}
+                value={invoiceForm.totalAmount}
                 onChange={handleInvoiceFormChange}
-                placeholder="Enter amount"
+                placeholder="Enter total amount"
+                required
               />
             </div>
 
@@ -217,6 +301,50 @@ function BusinessDetail() {
               {isSubmitting ? 'Processing...' : 'Add Invoice'}
             </button>
           </form>
+        </div>
+          </div>
+
+          {/* Right Column - Invoices Table */}
+          <div className="right-column">
+            {/* Invoices List */}
+            <div className="invoices-list-box">
+          <div className="business-info-header">
+            <h3>Invoices</h3>
+          </div>
+          {isLoadingInvoices ? (
+            <div className="invoices-loading">Loading invoices...</div>
+          ) : invoices.length === 0 ? (
+            <div className="no-invoices">No invoices found for this business.</div>
+          ) : (
+            <div className="invoices-table-wrapper">
+              <table className="invoices-table">
+                <thead>
+                  <tr>
+                    <th>Invoice Number</th>
+                    <th>Issuer</th>
+                    <th>Receiver</th>
+                    <th>Total Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoices.map((invoice, index) => (
+                    <tr key={invoice.invoiceUuid || invoice.id || index}>
+                      <td>{invoice.invoiceNumber || 'N/A'}</td>
+                      <td>{invoice.issuerName || 'N/A'}</td>
+                      <td>{invoice.receiverName || 'N/A'}</td>
+                      <td>
+                        {invoice.totalAmount 
+                          ? `${Number(invoice.totalAmount).toLocaleString()} EGP` 
+                          : 'N/A'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+          </div>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomeLeft.css';
 
-function HomeLeft({ onProfileClick, onBusinessClick, onAddBusinessClick, onLogoClick }) {
+function HomeLeft({ onProfileClick, onBusinessClick, onAddBusinessClick, onMembershipClick, onLogoClick, activeSection }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -34,25 +34,34 @@ function HomeLeft({ onProfileClick, onBusinessClick, onAddBusinessClick, onLogoC
       </div>
 
       {/* User Profile */}
-      <div className="home-left-item" onClick={onProfileClick}>
+      <div 
+        className={`home-left-item ${activeSection === 'profile' ? 'active' : ''}`}
+        onClick={onProfileClick}
+      >
         <div className="home-left-icon">👤</div>
         <span className="home-left-text">User Profile</span>
       </div>
 
       {/* User Business */}
-      <div className="home-left-item" onClick={onBusinessClick}>
+      <div 
+        className={`home-left-item ${activeSection === 'business' ? 'active' : ''}`}
+        onClick={onBusinessClick}
+      >
         <div className="home-left-icon">🏢</div>
         <span className="home-left-text">User Business</span>
       </div>
 
-      {/* Add Business */}
-      <div className="home-left-item" onClick={onAddBusinessClick}>
-        <div className="home-left-icon">➕</div>
-        <span className="home-left-text">Add Business</span>
+      {/* Membership Plans */}
+      <div 
+        className={`home-left-item ${activeSection === 'membership' ? 'active' : ''}`}
+        onClick={onMembershipClick}
+      >
+        <div className="home-left-icon">⭐</div>
+        <span className="home-left-text">Membership Plans</span>
       </div>
 
-      {/* Log Out */}
-      <div className="home-left-item" onClick={handleLogout}>
+      {/* Log Out - positioned at bottom */}
+      <div className="home-left-item home-left-logout" onClick={handleLogout}>
         <div className="home-left-icon">🚪</div>
         <span className="home-left-text">Log Out</span>
       </div>

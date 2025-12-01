@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './signup.css';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -13,13 +14,16 @@ import { getPasswordStrength,
 
 // email pass full name mobile number nid 
 function Signup() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
-  const [mobileNumber, setMobileNumber] = useState('');
+  const [mobile, setMobile] = useState('');
   const [nationalId, setNationalId] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [signupError, setSignupError] = useState('');
+  const [signupSuccess, setSignupSuccess] = useState('');
 
   const handleNationalIdChange = (e) => {
     const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
@@ -32,49 +36,66 @@ function Signup() {
     e.preventDefault();
     
     // Validation
+    setSignupError('');
+    setSignupSuccess('');
     if (password !== confirmPassword) {
-      alert('Passwords do not match!');
+      setSignupError('Passwords do not match.');
       return;
     }
     if (nationalId.length !== 14) {
-      alert('National ID must be exactly 14 digits!');
+      setSignupError('National ID must be exactly 14 digits.');
       return;
     }
 
     setIsLoading(true);
     
     try {
-      const response = await axiosClient.post('/signup', {
+
+      console.log('Submitting signup form with data:', { email, fullName, mobile, nationalId, password });
+
+      const response = await axiosClient.post('/users/register', {
         email,
         fullName,
-        mobileNumber,
+        mobile,
         nationalId,
         password
       });
       
       // Success handling
       console.log('Signup successful:', response.data);
-      alert('Account created successfully!');
+      
+      // Store the access token from the session
+      if (response.data.session && response.data.session.access_token) {
+        localStorage.setItem('access_token', response.data.session.access_token);
+      } else if (response.data.access_token) {
+        localStorage.setItem('access_token', response.data.access_token);
+      } else if (response.data.token) {
+        localStorage.setItem('access_token', response.data.token);
+      }
+      
+      setSignupSuccess('Account created successfully. Redirecting to login...');
       
       // Clear form
       setEmail('');
       setFullName('');
-      setMobileNumber('');
+      setMobile('');
       setNationalId('');
       setPassword('');
       setConfirmPassword('');
+      // Navigate after short delay so user sees success message
+      setTimeout(() => navigate('/login'), 1000);
     } catch (error) {
       // Error handling
       console.error('Signup error:', error);
       if (error.response) {
         // Server responded with error status
-        alert(error.response.data?.message || 'Signup failed. Please try again.');
+        setSignupError(error.response.data?.message || 'Signup failed. Please try again.');
       } else if (error.request) {
         // Request was made but no response received
-        alert('Network error. Please check your connection.');
+        setSignupError('Network error. Please check your connection.');
       } else {
         // Something else happened
-        alert('An error occurred. Please try again.');
+        setSignupError('An error occurred. Please try again.');
       }
     } finally {
       setIsLoading(false);
@@ -108,6 +129,12 @@ function Signup() {
 
           {/* Form */}
           <form className="signup-form" onSubmit={handleSubmit}>
+            {signupError && (
+              <div className="form-message form-error" style={{ marginBottom: 12 }}>{signupError}</div>
+            )}
+            {signupSuccess && (
+              <div className="form-message form-success" style={{ marginBottom: 12 }}>{signupSuccess}</div>
+            )}
             <Input 
               type="text" 
               placeholder="Full Name" 
@@ -123,8 +150,8 @@ function Signup() {
             <Input 
               type="tel" 
               placeholder="Mobile Number" 
-              value={mobileNumber} 
-              onChange={(e) => setMobileNumber(e.target.value)} 
+              value={mobile} 
+              onChange={(e) => setMobile(e.target.value)} 
             />
             <Input 
               type="text" 

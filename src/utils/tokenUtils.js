@@ -1,0 +1,26 @@
+// Decode JWT token without verification (client-side)
+export const decodeToken = (token) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return null;
+  }
+};
+
+// Get user ID from stored token
+export const getUserIdFromToken = () => {
+  const token = localStorage.getItem('access_token');
+  if (!token) return null;
+  
+  const decoded = decodeToken(token);
+  return decoded?.sub || decoded?.user_id || decoded?.id || null;
+};

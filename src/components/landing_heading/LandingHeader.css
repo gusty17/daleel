@@ -4,8 +4,7 @@
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  padding-left: 120px;
-  padding-right: 120px;
+  padding: 1.5rem 120px;
 }
 
 .header-left .daleel-logo {
@@ -26,7 +25,7 @@
   background-color: transparent;
   color: #213448;
   font-weight: 600;
-  padding: 0.6rem 1.5rem;
+  padding: 0.75rem 2rem;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -40,7 +39,7 @@
   background-color: #213448;
   color: #ffffff;
   font-weight: 600;
-  padding: 0.65rem 1.5rem;
+  padding: 0.85rem 2rem;
   border-radius: 999px;
   cursor: pointer;
   transition: opacity 0.2s ease;
