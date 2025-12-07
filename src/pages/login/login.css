@@ -1,7 +1,5 @@
 .login-container {
   display: flex;
-  width: 1440px;
-  height: 1024px;
   margin: 25px;
   padding: 0;
   overflow: hidden;
