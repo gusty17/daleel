@@ -1,24 +1,80 @@
 .checkout-container {
   display: flex;
   min-height: 100vh;
-  background: #213448;
+  background: linear-gradient(135deg, #1e3a5f 0%, #213448 50%, #2a4a6d 100%);
 }
 
 .checkout-content {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  flex-direction: column;
+  padding: 40px;
+  overflow-y: auto;
 }
 
-.checkout-wrapper {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  padding: 32px;
+.checkout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.checkout-header h2 {
+  margin: 0;
+  font-size: 32px;
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.checkout-back-btn {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.checkout-back-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+  transform: translateX(-2px);
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
   width: 100%;
-  max-width: 500px;
+}
+
+.checkout-form-column {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  padding: 32px;
+  animation: slideInLeft 0.4s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.checkout-summary-column {
   animation: slideInRight 0.4s ease-out;
 }
 
@@ -31,6 +87,113 @@
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+/* Payment Summary Card */
+.payment-summary-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  padding: 28px;
+  position: sticky;
+  top: 20px;
+  border: 2px solid #e5e7eb;
+}
+
+.payment-summary-card h3 {
+  margin: 0 0 24px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #213448;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 12px;
+}
+
+.summary-detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.summary-detail-item.discount-item {
+  background: linear-gradient(135deg, #fef3c7 0%, #fef9e7 100%);
+  padding: 12px 16px;
+  margin: 8px -16px;
+  border-radius: 8px;
+  border: 1px solid #fbbf24;
+}
+
+.detail-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #16202B;
+  font-weight: 600;
+}
+
+.detail-value.strikethrough {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+.discount-badge {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #78350f;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.summary-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #e5e7eb 50%, transparent 100%);
+  margin: 16px 0;
+}
+
+.summary-total-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.summary-total-item.grand-total {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  padding: 16px;
+  margin: 16px -16px -16px;
+  border-radius: 0 0 12px 12px;
+  border-top: 2px solid #2563eb;
+}
+
+.total-label {
+  font-size: 15px;
+  color: #374151;
+  font-weight: 600;
+}
+
+.summary-total-item.grand-total .total-label {
+  font-size: 16px;
+  color: #1e3a8a;
+  font-weight: 700;
+}
+
+.total-value {
+  font-size: 18px;
+  color: #213448;
+  font-weight: 700;
+}
+
+.summary-total-item.grand-total .total-value {
+  font-size: 24px;
+  color: #1e40af;
+  font-weight: 800;
 }
 
 .checkout-header {

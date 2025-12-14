@@ -9,48 +9,51 @@ function Membership() {
 
   const plans = [
     {
-      id: 'monthly',
-      name: 'Monthly Plan',
-      duration: '1 Month',
-      price: 299,
+      id: 'quarterly',
+      name: 'Quarterly Plan',
+      duration: '1 Quarter',
+      quarters: 1,
+      price: 450,
       features: [
-        'Unlimited Business Management',
-        'Invoice Tracking',
-        'Tax Calculations',
+        'Tax Calculation for 1 Quarter',
+        'Invoice Tracking & Management',
+        'Quarterly Tax Reports',
         'Email Support',
-        'Monthly Reports'
+        'Export to PDF'
       ]
     },
     {
-      id: 'semi-annual',
-      name: '6 Months Plan',
-      duration: '6 Months',
-      price: 1499,
-      originalPrice: 1794,
-      discount: '17% OFF',
+      id: 'bi-quarterly',
+      name: 'Bi-Quarterly Plan',
+      duration: '2 Quarters',
+      quarters: 2,
+      price: 850,
+      originalPrice: 900,
+      discount: '6% OFF',
       features: [
-        'All Monthly Plan Features',
+        'Tax Calculation for 2 Quarters',
+        'All Quarterly Plan Features',
         'Priority Support',
         'Advanced Analytics',
-        'Export to Excel/PDF',
-        'Multi-user Access (up to 3 users)'
+        'Export to Excel/PDF'
       ],
       popular: true
     },
     {
       id: 'annual',
       name: 'Annual Plan',
-      duration: '12 Months',
-      price: 2699,
-      originalPrice: 3588,
-      discount: '25% OFF',
+      duration: '4 Quarters',
+      quarters: 4,
+      price: 1500,
+      originalPrice: 1800,
+      discount: '17% OFF',
       features: [
-        'All 6 Months Plan Features',
+        'Tax Calculation for All 4 Quarters',
+        'All Bi-Quarterly Plan Features',
         '24/7 Premium Support',
-        'Custom Integrations',
+        'Multi-Business Support',
         'Dedicated Account Manager',
-        'Unlimited Users',
-        'API Access'
+        'API Access & Integrations'
       ]
     }
   ];
@@ -71,8 +74,9 @@ function Membership() {
     navigate('/home');
   };
 
-  const handleSelectPlan = (planId) => {
-    console.log('Selected plan:', planId);
+  const handleSelectPlan = (plan) => {
+    console.log('Selected plan:', plan.id);
+    navigate('/checkout', { state: { plan } });
   };
 
   return (
@@ -128,17 +132,12 @@ function Membership() {
 
               <button 
                 className="select-plan-btn"
-                onClick={() => handleSelectPlan(plan.id)}
+                onClick={() => handleSelectPlan(plan)}
               >
-                {selectedPlan === plan.id ? 'Selected' : 'Choose Plan'}
+                Choose Plan
               </button>
             </div>
           ))}
-        </div>
-
-        <div className="membership-footer">
-          <p>All plans include a 14-day money-back guarantee</p>
-          <p>Need help choosing? <a href="#contact">Contact our sales team</a></p>
         </div>
       </div>
     </div>

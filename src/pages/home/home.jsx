@@ -15,6 +15,7 @@ function Home() {
   const [showAddBusinessForm, setShowAddBusinessForm] = useState(false);
   const [showAbout, setShowAbout] = useState(true);
   const [showMembership, setShowMembership] = useState(false);
+  const [showTaxModal, setShowTaxModal] = useState(false);
   const [activeSection, setActiveSection] = useState('about'); // 'about', 'profile', 'business', 'membership', or null
   const [userData, setUserData] = useState(null);
   const [businesses, setBusinesses] = useState([]);
@@ -94,14 +95,26 @@ function Home() {
 
       console.log('Fetched user data:', apiData);
       
-      // Map the API response to our display format
+      // Map the API response to our display format, including subscription flag
       const mappedData = {
         name: apiData.fullName || apiData.name || 'N/A',
         email: apiData.email || 'N/A',
         phoneNumber: apiData.mobile || apiData.phoneNumber || 'N/A',
-        nationalId: apiData.nationalId || 'N/A'
+        nationalId: apiData.nationalId || 'N/A',
+        // Normalize different possible keys/values for subscription
+        isSubscribed: ((): boolean => {
+          if (typeof apiData.isSubscribed === 'boolean') return apiData.isSubscribed;
+          if (typeof apiData.is_subscribed === 'boolean') return apiData.is_subscribed;
+          if (typeof apiData.isSubscribed === 'string') return apiData.isSubscribed.toLowerCase() === 'true';
+          if (typeof apiData.is_subscribed === 'string') return apiData.is_subscribed.toLowerCase() === 'true';
+          if (typeof apiData.subscribed === 'boolean') return apiData.subscribed;
+          if (typeof apiData.subscribed === 'string') return apiData.subscribed.toLowerCase() === 'true';
+          return false;
+        })()
       };
-      
+
+      console.log('Mapped user data for UI:', mappedData);
+
       setUserData(mappedData);
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -182,13 +195,25 @@ function Home() {
   };
 
   const handleAddBusinessClick = () => {
-    // Show add business form
+    // Show tax registration modal
+    setShowTaxModal(true);
+  };
+
+  const handleHaveTaxNumber = () => {
+    // Close modal and show add business form
+    setShowTaxModal(false);
     setShowAddBusinessForm(true);
     setShowBusinessBoxes(false);
     setShowProfile(false);
     setShowAbout(false);
     setShowMembership(false);
     setActiveSection('business');
+  };
+
+  const handleNeedTaxNumber = () => {
+    // Close modal and navigate to tax registration guide page
+    setShowTaxModal(false);
+    navigate('/tax-registration-guide');
   };
 
   const handleMembershipClick = () => {
@@ -373,11 +398,7 @@ function Home() {
             
             {businesses.length === 0 && (
               <button
-                onClick={async () => {
-                  await handleBusinessClick();
-                  setShowAddBusinessForm(true);
-                  setShowBusinessBoxes(false);
-                }}
+                onClick={handleAddBusinessClick}
                 style={{
                   marginTop: '40px',
                   padding: '16px 32px',
@@ -437,6 +458,12 @@ function Home() {
                 <div className="profile-info-item">
                   <span className="profile-info-label">Birth Date:</span>
                   <span className="profile-info-value">{calculateBirthDateFromNationalId(userData.nationalId)}</span>
+                </div>
+                <div className="profile-info-item">
+                  <span className="profile-info-label">Subscription Status:</span>
+                  <span className={`profile-info-value subscription-status ${userData.isSubscribed ? 'subscribed' : 'not-subscribed'}`}>
+                    {userData.isSubscribed ? '✓ Subscribed' : '✗ Not Subscribed'}
+                  </span>
                 </div>
               </div>
             ) : null}
@@ -559,48 +586,51 @@ function Home() {
             <div className="plans-grid">
               {[
                 {
-                  id: 'monthly',
-                  name: 'Monthly Plan',
-                  duration: '1 Month',
-                  price: 299,
+                  id: 'quarterly',
+                  name: 'Quarterly Plan',
+                  duration: '1 Quarter',
+                  quarters: 1,
+                  price: 450,
                   features: [
-                    'Unlimited Business Management',
-                    'Invoice Tracking',
-                    'Tax Calculations',
+                    'Tax Calculation for 1 Quarter',
+                    'Invoice Tracking & Management',
+                    'Quarterly Tax Reports',
                     'Email Support',
-                    'Monthly Reports'
+                    'Export to PDF'
                   ]
                 },
                 {
-                  id: 'semi-annual',
-                  name: '6 Months Plan',
-                  duration: '6 Months',
-                  price: 1499,
-                  originalPrice: 1794,
-                  discount: '17% OFF',
+                  id: 'bi-quarterly',
+                  name: 'Bi-Quarterly Plan',
+                  duration: '2 Quarters',
+                  quarters: 2,
+                  price: 850,
+                  originalPrice: 900,
+                  discount: '6% OFF',
                   features: [
-                    'All Monthly Plan Features',
+                    'Tax Calculation for 2 Quarters',
+                    'All Quarterly Plan Features',
                     'Priority Support',
                     'Advanced Analytics',
-                    'Export to Excel/PDF',
-                    'Multi-user Access (up to 3 users)'
+                    'Export to Excel/PDF'
                   ],
                   popular: true
                 },
                 {
                   id: 'annual',
                   name: 'Annual Plan',
-                  duration: '12 Months',
-                  price: 2699,
-                  originalPrice: 3588,
-                  discount: '25% OFF',
+                  duration: '4 Quarters',
+                  quarters: 4,
+                  price: 1500,
+                  originalPrice: 1800,
+                  discount: '17% OFF',
                   features: [
-                    'All 6 Months Plan Features',
+                    'Tax Calculation for All 4 Quarters',
+                    'All Bi-Quarterly Plan Features',
                     '24/7 Premium Support',
-                    'Custom Integrations',
+                    'Multi-Business Support',
                     'Dedicated Account Manager',
-                    'Unlimited Users',
-                    'API Access'
+                    'API Access & Integrations'
                   ]
                 }
               ].map((plan) => (
@@ -642,12 +672,37 @@ function Home() {
                     className="select-plan-btn"
                     onClick={() => {
                       console.log('Selected plan:', plan.id);
+                      navigate('/checkout', { state: { plan } });
                     }}
                   >
                     Choose Plan
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Tax Registration Modal */}
+        {showTaxModal && (
+          <div className="tax-modal-overlay" onClick={() => setShowTaxModal(false)}>
+            <div className="tax-modal-content" onClick={(e) => e.stopPropagation()}>
+              <button className="tax-modal-close" onClick={() => setShowTaxModal(false)}>×</button>
+              <div className="tax-modal-header">
+                <h2>Tax Registration Number Required</h2>
+              </div>
+              <div className="tax-modal-body">
+                <p>Before adding your business, you need to have a Tax Registration Number.</p>
+                <p>Do you already have a Tax Registration Number?</p>
+              </div>
+              <div className="tax-modal-actions">
+                <button className="tax-modal-btn tax-modal-btn-primary" onClick={handleHaveTaxNumber}>
+                  Yes, I Have One
+                </button>
+                <button className="tax-modal-btn tax-modal-btn-secondary" onClick={handleNeedTaxNumber}>
+                  No, Show Me How to Get One
+                </button>
+              </div>
             </div>
           </div>
         )}

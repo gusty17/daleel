@@ -54,7 +54,14 @@ function HomeLeft({ onProfileClick, onBusinessClick, onAddBusinessClick, onMembe
       {/* Membership Plans */}
       <div 
         className={`home-left-item ${activeSection === 'membership' ? 'active' : ''}`}
-        onClick={onMembershipClick}
+        onClick={() => {
+          if (typeof onMembershipClick === 'function') {
+            onMembershipClick();
+            return;
+          }
+          // fallback: always navigate to the membership route
+          navigate('/membership');
+        }}
       >
         <div className="home-left-icon">⭐</div>
         <span className="home-left-text">Membership Plans</span>

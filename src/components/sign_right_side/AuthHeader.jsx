@@ -19,13 +19,6 @@ function AuthHeader() {
 
   return (
     <div className="auth-header">
-      {/* Logo */}
-      <img 
-        src="/images/daleel_logo.png" 
-        alt="Daleel Logo" 
-        className="auth-logo"
-      />
-
       {/* Sign In / Sign Up Tabs */}
       <div className="auth-tabs">
         <button

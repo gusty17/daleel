@@ -1,16 +1,16 @@
 .auth-image-side {
   flex: 1;
-  position: relative;
-  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .auth-background-image {
-  width: 600px;
-  height: 800px;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  object-fit: cover;
-  border-radius: 20px;
+  max-width: 400px;
+  max-height: 400px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
 

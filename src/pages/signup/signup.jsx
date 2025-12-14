@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import './signup.css';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -24,6 +25,8 @@ function Signup() {
   const [isLoading, setIsLoading] = useState(false);
   const [signupError, setSignupError] = useState('');
   const [signupSuccess, setSignupSuccess] = useState('');
+  const [captchaValue, setCaptchaValue] = useState(null);
+  const recaptchaRef = useRef();
 
   const handleNationalIdChange = (e) => {
     const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
@@ -38,6 +41,12 @@ function Signup() {
     // Validation
     setSignupError('');
     setSignupSuccess('');
+    
+    if (!captchaValue) {
+      setSignupError('Please complete the CAPTCHA verification');
+      return;
+    }
+    
     if (password !== confirmPassword) {
       setSignupError('Passwords do not match.');
       return;
@@ -97,24 +106,13 @@ function Signup() {
         // Something else happened
         setSignupError('An error occurred. Please try again.');
       }
+      setCaptchaValue(null);
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleGmailLogin = () => {
-    console.log('Login with Gmail');
-    // Handle Gmail login
-  };
-
-  const handleAppleLogin = () => {
-    console.log('Login with Apple');
-    // Handle Apple login
-  };
-
-  const handleMicrosoftLogin = () => {
-    console.log('Login with Microsoft');
-    // Handle Microsoft login
   };
 
   return (
@@ -202,35 +200,18 @@ function Signup() {
               </div>
             </div>
 
-            <Button type="submit" className="signup-submit-btn" disabled={isLoading}>
+            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                onChange={(value) => setCaptchaValue(value)}
+              />
+            </div>
+
+            <Button type="submit" className="signup-submit-btn" disabled={isLoading || !captchaValue}>
               {isLoading ? 'Creating Account...' : 'Create Account'}
             </Button>
           </form>
-
-          {/* Social Login Buttons */}
-          <div className="social-login">
-            <Button 
-              type="button" 
-              className="social-btn gmail-btn"
-              onClick={handleGmailLogin}
-            >
-              <img src="/images/gmail_logo.png" alt="Gmail" className="social-logo" />
-            </Button>
-            <Button 
-              type="button" 
-              className="social-btn apple-btn"
-              onClick={handleAppleLogin}
-            >
-              <img src="/images/apple_logo.png" alt="Apple" className="social-logo" />
-            </Button>
-            <Button 
-              type="button" 
-              className="social-btn microsoft-btn"
-              onClick={handleMicrosoftLogin}
-            >
-              <img src="/images/microsoft_logo.png" alt="Microsoft" className="social-logo" />
-            </Button>
-          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 import './login.css';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -11,6 +12,8 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [captchaValue, setCaptchaValue] = useState(null);
+  const recaptchaRef = useRef();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -19,6 +22,11 @@ function Login() {
 
     if (!email || !password) {
       setLoginError('Please enter email and password');
+      return;
+    }
+
+    if (!captchaValue) {
+      setLoginError('Please complete the CAPTCHA verification');
       return;
     }
 
@@ -39,13 +47,12 @@ function Login() {
     } catch (err) {
       console.error(err);
       setLoginError(err.response?.data?.message || 'Invalid email or password');
+      setCaptchaValue(null);
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
     }
   };
-
-  // Dummy handlers for social login (you can implement later)
-  const handleGmailLogin = () => console.log('Login with Gmail');
-  const handleAppleLogin = () => console.log('Login with Apple');
-  const handleMicrosoftLogin = () => console.log('Login with Microsoft');
 
   return (
     <div className="login-container">
@@ -74,23 +81,17 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Button type="submit" className="login-submit-btn">
+            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                onChange={(value) => setCaptchaValue(value)}
+              />
+            </div>
+            <Button type="submit" className="login-submit-btn" disabled={!captchaValue}>
               Login
             </Button>
           </form>
-
-          {/* Social Login Buttons */}
-          <div className="social-login">
-            <Button type="button" className="social-btn gmail-btn" onClick={handleGmailLogin}>
-              <img src="/images/gmail_logo.png" alt="Gmail" className="social-logo" />
-            </Button>
-            <Button type="button" className="social-btn apple-btn" onClick={handleAppleLogin}>
-              <img src="/images/apple_logo.png" alt="Apple" className="social-logo" />
-            </Button>
-            <Button type="button" className="social-btn microsoft-btn" onClick={handleMicrosoftLogin}>
-              <img src="/images/microsoft_logo.png" alt="Microsoft" className="social-logo" />
-            </Button>
-          </div>
         </div>
       </div>
     </div>

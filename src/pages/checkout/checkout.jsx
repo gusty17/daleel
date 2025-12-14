@@ -8,6 +8,15 @@ function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
   const business = location.state?.business || {};
+  const plan = location.state?.plan || null;
+  const taxPayment = location.state?.taxPayment || null;
+  
+  // Determine payment type
+  const isMembershipPayment = !!plan;
+  const isTaxPayment = !!taxPayment;
+  const paymentAmount = isMembershipPayment ? plan.price : 
+                        isTaxPayment ? taxPayment.totalAmount : 
+                        business.taxAmount;
   
   const [formData, setFormData] = useState({
     cardName: '',
@@ -100,13 +109,38 @@ function Checkout() {
 
     try {
       // Prepare payload to send to backend
-      const payload = {
+      const payload = isMembershipPayment ? {
+        planId: plan.id,
+        planName: plan.name,
+        planPrice: plan.price,
+        planDuration: plan.duration,
+        quarters: plan.quarters,
+        cardholderName: formData.cardName,
+        cardNumber: formData.cardNumber.replace(/\s/g, ''),
+        expiryDate: formData.expiryDate,
+        cvv: formData.cvv,
+        email: formData.email,
+        phone: formData.phone
+      } : isTaxPayment ? {
+        businessId: taxPayment.businessId,
+        businessName: taxPayment.businessName,
+        quarter: taxPayment.quarter,
+        taxAmount: taxPayment.taxAmount,
+        serviceFee: taxPayment.serviceFee,
+        totalAmount: taxPayment.totalAmount,
+        cardholderName: formData.cardName,
+        cardNumber: formData.cardNumber.replace(/\s/g, ''),
+        expiryDate: formData.expiryDate,
+        cvv: formData.cvv,
+        email: formData.email,
+        phone: formData.phone
+      } : {
         businessId: business.id || business.taxNumber,
         businessName: business.name,
         taxNumber: business.taxNumber,
         taxAmount: business.taxAmount,
         cardholderName: formData.cardName,
-        cardNumber: formData.cardNumber.replace(/\s/g, ''), // Remove spaces
+        cardNumber: formData.cardNumber.replace(/\s/g, ''),
         expiryDate: formData.expiryDate,
         cvv: formData.cvv,
         email: formData.email,
@@ -114,13 +148,22 @@ function Checkout() {
       };
 
       // Send payment data to backend
-      const response = await axiosClient.post('/checkout/process-payment', payload);
+      const endpoint = isMembershipPayment ? '/checkout/process-subscription' : 
+                       isTaxPayment ? '/checkout/process-tax-payment' : 
+                       '/checkout/process-payment';
+      const response = await axiosClient.post(endpoint, payload);
 
       if (response.status === 200 || response.data.success) {
-        setSuccessMessage('Payment processed successfully! Redirecting...');
+        setSuccessMessage(isMembershipPayment ? 'Subscription activated successfully! Redirecting...' : 
+                          isTaxPayment ? 'Tax payment processed successfully! Redirecting...' :
+                          'Payment processed successfully! Redirecting...');
         
         setTimeout(() => {
-          navigate('/home', { state: { showBusinesses: true } });
+          if (isTaxPayment) {
+            navigate('/businessDetail', { state: { business: { id: taxPayment.businessId, name: taxPayment.businessName } } });
+          } else {
+            navigate('/home', { state: isMembershipPayment ? { showProfile: true } : { showBusinesses: true } });
+          }
         }, 1500);
       } else {
         setErrorMessage(response.data.message || 'Payment processing failed. Please try again.');
@@ -159,135 +202,210 @@ function Checkout() {
       />
       
       <div className="checkout-content">
-        <div className="checkout-wrapper">
-          <div className="checkout-header">
-            <h2>Payment Checkout</h2>
-            <button className="checkout-back-btn" onClick={() => navigate(-1)}>← Back</button>
+        <div className="checkout-header">
+          <h2>Payment Checkout</h2>
+          <button className="checkout-back-btn" onClick={() => navigate(-1)}>← Back</button>
+        </div>
+
+        <div className="checkout-grid">
+          {/* Left Column - Payment Form */}
+          <div className="checkout-form-column">
+            <form className="payment-form" onSubmit={handleSubmit}>
+              <div className="form-section">
+                <h3>Card Information</h3>
+                
+                <div className="form-group">
+                  <label htmlFor="cardName">Cardholder Name</label>
+                  <input
+                    type="text"
+                    id="cardName"
+                    name="cardName"
+                    value={formData.cardName}
+                    onChange={handleInputChange}
+                    placeholder="John Doe"
+                    disabled={isProcessing}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="cardNumber">Card Number</label>
+                  <input
+                    type="text"
+                    id="cardNumber"
+                    name="cardNumber"
+                    value={formData.cardNumber}
+                    onChange={handleInputChange}
+                    placeholder="1234 5678 9012 3456"
+                    disabled={isProcessing}
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="expiryDate">Expiry Date</label>
+                    <input
+                      type="text"
+                      id="expiryDate"
+                      name="expiryDate"
+                      value={formData.expiryDate}
+                      onChange={handleInputChange}
+                      placeholder="MM/YY"
+                      disabled={isProcessing}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="cvv">CVV</label>
+                    <input
+                      type="text"
+                      id="cvv"
+                      name="cvv"
+                      value={formData.cvv}
+                      onChange={handleInputChange}
+                      placeholder="123"
+                      disabled={isProcessing}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-section">
+                <h3>Billing Information</h3>
+                
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="john@example.com"
+                    disabled={isProcessing}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="phone">Phone Number</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="01234567890"
+                    disabled={isProcessing}
+                  />
+                </div>
+              </div>
+
+              {errorMessage && (
+                <div className="form-message error-message">{errorMessage}</div>
+              )}
+
+              {successMessage && (
+                <div className="form-message success-message">{successMessage}</div>
+              )}
+
+              <button
+                type="submit"
+                className="pay-submit-btn"
+                disabled={isProcessing}
+              >
+                {isProcessing ? 'Processing...' : `Pay ${paymentAmount?.toLocaleString()} EGP`}
+              </button>
+            </form>
           </div>
 
-          {business && business.name && (
-            <div className="order-summary">
-              <h3>Order Summary</h3>
-              <div className="summary-item">
-                <span className="summary-label">Business Name:</span>
-                <span className="summary-value">{business.name}</span>
-              </div>
-              <div className="summary-item">
-                <span className="summary-label">Tax Number:</span>
-                <span className="summary-value">{business.taxNumber || 'N/A'}</span>
-              </div>
-              <div className="summary-item total">
-                <span className="summary-label">Total Amount:</span>
-                <span className="summary-value">{business.taxAmount?.toLocaleString()} EGP</span>
-              </div>
+          {/* Right Column - Payment Summary Card */}
+          <div className="checkout-summary-column">
+            <div className="payment-summary-card">
+              <h3>Payment Summary</h3>
+              {isMembershipPayment ? (
+                <>
+                  <div className="summary-detail-item">
+                    <span className="detail-label">Plan</span>
+                    <span className="detail-value">{plan.name}</span>
+                  </div>
+                  <div className="summary-detail-item">
+                    <span className="detail-label">Duration</span>
+                    <span className="detail-value">{plan.duration}</span>
+                  </div>
+                  {plan.originalPrice && (
+                    <div className="summary-detail-item">
+                      <span className="detail-label">Original Price</span>
+                      <span className="detail-value strikethrough">{plan.originalPrice.toLocaleString()} EGP</span>
+                    </div>
+                  )}
+                  {plan.discount && (
+                    <div className="summary-detail-item discount-item">
+                      <span className="detail-label">Discount</span>
+                      <span className="detail-value discount-badge">{plan.discount}</span>
+                    </div>
+                  )}
+                  <div className="summary-divider"></div>
+                  <div className="summary-total-item">
+                    <span className="total-label">Membership Fee</span>
+                    <span className="total-value">{plan.price.toLocaleString()} EGP</span>
+                  </div>
+                </>
+              ) : isTaxPayment ? (
+                <>
+                  <div className="summary-detail-item">
+                    <span className="detail-label">Business</span>
+                    <span className="detail-value">{taxPayment.businessName}</span>
+                  </div>
+                  <div className="summary-detail-item">
+                    <span className="detail-label">Quarter</span>
+                    <span className="detail-value">{taxPayment.quarterLabel}</span>
+                  </div>
+                  <div className="summary-detail-item">
+                    <span className="detail-label">Revenue</span>
+                    <span className="detail-value">{taxPayment.revenue.toLocaleString()} EGP</span>
+                  </div>
+                  <div className="summary-divider"></div>
+                  <div className="summary-total-item">
+                    <span className="total-label">Tax Amount</span>
+                    <span className="total-value">{taxPayment.taxAmount.toLocaleString()} EGP</span>
+                  </div>
+                  <div className="summary-total-item">
+                    <span className="total-label">Service Fee (5%)</span>
+                    <span className="total-value">{taxPayment.serviceFee.toLocaleString()} EGP</span>
+                  </div>
+                  <div className="summary-divider"></div>
+                  <div className="summary-total-item grand-total">
+                    <span className="total-label">Total Amount</span>
+                    <span className="total-value">{taxPayment.totalAmount.toLocaleString()} EGP</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="summary-detail-item">
+                    <span className="detail-label">Business</span>
+                    <span className="detail-value">{business.name}</span>
+                  </div>
+                  <div className="summary-detail-item">
+                    <span className="detail-label">Tax Number</span>
+                    <span className="detail-value">{business.taxNumber || 'N/A'}</span>
+                  </div>
+                  <div className="summary-divider"></div>
+                  <div className="summary-total-item">
+                    <span className="total-label">Tax Amount</span>
+                    <span className="total-value">{business.taxAmount?.toLocaleString()} EGP</span>
+                  </div>
+                  <div className="summary-total-item">
+                    <span className="total-label">Service Fee (5%)</span>
+                    <span className="total-value">{((business.taxAmount || 0) * 0.05).toLocaleString()} EGP</span>
+                  </div>
+                  <div className="summary-divider"></div>
+                  <div className="summary-total-item grand-total">
+                    <span className="total-label">Total Amount</span>
+                    <span className="total-value">{((business.taxAmount || 0) * 1.05).toLocaleString()} EGP</span>
+                  </div>
+                </>
+              )}
             </div>
-          )}
-
-          <form className="payment-form" onSubmit={handleSubmit}>
-            <div className="form-section">
-              <h3>Card Information</h3>
-              
-              <div className="form-group">
-                <label htmlFor="cardName">Cardholder Name</label>
-                <input
-                  type="text"
-                  id="cardName"
-                  name="cardName"
-                  value={formData.cardName}
-                  onChange={handleInputChange}
-                  placeholder="John Doe"
-                  disabled={isProcessing}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="cardNumber">Card Number</label>
-                <input
-                  type="text"
-                  id="cardNumber"
-                  name="cardNumber"
-                  value={formData.cardNumber}
-                  onChange={handleInputChange}
-                  placeholder="1234 5678 9012 3456"
-                  disabled={isProcessing}
-                />
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="expiryDate">Expiry Date</label>
-                  <input
-                    type="text"
-                    id="expiryDate"
-                    name="expiryDate"
-                    value={formData.expiryDate}
-                    onChange={handleInputChange}
-                    placeholder="MM/YY"
-                    disabled={isProcessing}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="cvv">CVV</label>
-                  <input
-                    type="text"
-                    id="cvv"
-                    name="cvv"
-                    value={formData.cvv}
-                    onChange={handleInputChange}
-                    placeholder="123"
-                    disabled={isProcessing}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="form-section">
-              <h3>Billing Information</h3>
-              
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="john@example.com"
-                  disabled={isProcessing}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="phone">Phone Number</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder="01234567890"
-                  disabled={isProcessing}
-                />
-              </div>
-            </div>
-
-            {errorMessage && (
-              <div className="form-message error-message">{errorMessage}</div>
-            )}
-
-            {successMessage && (
-              <div className="form-message success-message">{successMessage}</div>
-            )}
-
-            <button
-              type="submit"
-              className="pay-submit-btn"
-              disabled={isProcessing}
-            >
-              {isProcessing ? 'Processing...' : `Pay ${business.taxAmount?.toLocaleString()} EGP`}
-            </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>

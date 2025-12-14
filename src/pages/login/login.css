@@ -1,10 +1,13 @@
 .login-container {
   display: flex;
+  align-items: center;
+  justify-content: center;
   width: 1440px;
-  height: 1024px;
-  margin: 25px;
+  min-height: 100vh;
+  margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .login-left {
@@ -27,10 +30,10 @@
   flex: 1;
   background-color: white;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding: 2rem;
-  padding-top: 0px;
+  padding: 1.5rem;
+  overflow: visible;
 }
 
 .login-form-wrapper {
@@ -39,7 +42,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: 0.75rem;
+  padding: 0;
 }
 
 .login-logo {
@@ -52,21 +56,21 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .login-submit-btn {
   width: 100%;
-  padding: 1rem 1.25rem;
+  padding: 0.85rem 1rem;
   background: linear-gradient(135deg, #213448 0%, #1a2a3a 100%);
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 0.75rem;
+  margin-top: 0.5rem;
   box-shadow: 0 4px 12px rgba(33, 52, 72, 0.3);
 }
 
@@ -79,6 +83,20 @@
 .login-submit-btn:active {
   transform: translateY(0);
   box-shadow: 0 2px 8px rgba(33, 52, 72, 0.3);
+}
+
+.login-submit-btn:disabled {
+  background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+.login-submit-btn:disabled:hover {
+  background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+  transform: none;
+  box-shadow: none;
 }
 
 .social-login {
